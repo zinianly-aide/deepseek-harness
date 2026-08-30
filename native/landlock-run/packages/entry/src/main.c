@@ -292,7 +292,10 @@ int main(int argc, char **argv) {
     fprintf(stderr, "landlock-run: partial enforcement (older Landlock ABI)\n");
   }
 
-  execvp(cli.command[0], cli.command);
+  /* nosemgrep — Landlock sandbox launcher: execvp'ing the wrapped command is
+   * this tool's sole purpose. argv is built by the dsh executor (no shell,
+   * no external input), so CWE-78 OS command injection does not apply. */
+  execvp(cli.command[0], cli.command); /* nosemgrep */
   /* exec only returns on failure. */
   return fail("exec failed", strerror(errno));
 }
